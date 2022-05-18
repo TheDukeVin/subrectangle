@@ -7,6 +7,11 @@
 
 #include "subrect.h"
 
+Grid::Grid(int _N, int _M){
+    N = _N;
+    M = _M;
+}
+
 Grid::Grid(int _N, int _M, vector<bool> vals){
     N = _N;
     M = _M;
@@ -81,22 +86,6 @@ int Grid::DP(){
     return counter;
 }
 
-void Grid::verifyAllDP(int maxSize, double density, int numTrials){
-    for(int t=0; t<numTrials; t++){
-        delete A;
-        N = rand() % maxSize + 1;
-        M = rand() % maxSize + 1;
-        A = new bool*[N];
-        for(int i=0; i<N; i++){
-            A[i] = new bool[M];
-            for(int j=0; j<M; j++){
-                A[i][j] = rand() < density * RAND_MAX;
-            }
-        }
-        assert(checkAll() == DP());
-    }
-}
-
 int Grid::byRow(){
     int sizes[N];
     for(int i=0; i<N; i++) sizes[i] = 0;
@@ -117,6 +106,26 @@ int Grid::byRow(){
     return sum;
 }
 
+void Grid::randomize(double density){
+    A = new bool*[N];
+    for(int i=0; i<N; i++){
+        A[i] = new bool[M];
+        for(int j=0; j<M; j++){
+            A[i][j] = rand() < density * RAND_MAX;
+        }
+    }
+}
+
+void Grid::verifyAllDP(int maxSize, double density, int numTrials){
+    for(int t=0; t<numTrials; t++){
+        delete A;
+        N = rand() % maxSize + 1;
+        M = rand() % maxSize + 1;
+        randomize(density);
+        assert(checkAll() == DP());
+    }
+}
+
 int Grid::fromSizes(int start, int end){
     if(start > end) return 0;
     int minIndex = T->tableMin(start, end);
@@ -131,13 +140,7 @@ void Grid::verifyDPRow(int maxSize, double density, int numTrials){
         delete A;
         N = rand() % maxSize + 1;
         M = rand() % maxSize + 1;
-        A = new bool*[N];
-        for(int i=0; i<N; i++){
-            A[i] = new bool[M];
-            for(int j=0; j<M; j++){
-                A[i][j] = rand() < density * RAND_MAX;
-            }
-        }
+        randomize(density);
         assert(DP() == byRow());
     }
 }

@@ -8,11 +8,7 @@
 #ifndef subrect_h
 #define subrect_h
 
-#include <iostream>
-#include <vector>
-#include <stdlib.h>
-#include <ctime>
-using namespace std;
+#include "convNet.hpp"
 
 class MinTable{
 public:
@@ -36,12 +32,18 @@ public:
     int N, M;
     bool** A;
     
+    Grid(int _N, int _M);
     Grid(int _N, int _M, vector<bool> vals);
     int checkAll();
     int DP();
-    void verifyAllDP(int maxSize, double density, int numTrials);
     int byRow();
+    void randomize(double density);
+    void verifyAllDP(int maxSize, double density, int numTrials);
     void verifyDPRow(int maxSize, double density, int numTrials);
+    
+    // Network interaction
+    
+    void inputAgent(Agent* a);
     
 private:
     MinTable* T;
