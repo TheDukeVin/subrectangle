@@ -51,7 +51,10 @@ void Layer::resetGradient(){
 
 void Layer::updateParameters(double mult, double momentum){
     for(int i=0; i<numParams; i++){
-        params[i] -= Dparams[i] * mult;
+        double inc = Dparams[i] * mult;
+        if(rand() % 100 == 0) inc *= 10;
+        //params[i] -= Dparams[i] * mult;
+        params[i] -= inc;
         Dparams[i] *= momentum;
     }
     // Regularize
