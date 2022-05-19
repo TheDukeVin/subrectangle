@@ -49,9 +49,9 @@ void Layer::resetGradient(){
     }
 }
 
-void Layer::updateParameters(double learnRate){
+void Layer::updateParameters(double mult, double momentum){
     for(int i=0; i<numParams; i++){
-        params[i] -= Dparams[i] * learnRate / batchSize;
+        params[i] -= Dparams[i] * mult;
         Dparams[i] *= momentum;
     }
     // Regularize
@@ -339,9 +339,9 @@ void Agent::backProp(){
     layers[0]->accumulateGradient(activation[0], Dbias[0]);
 }
 
-void Agent::updateParameters(double learnRate){
+void Agent::updateParameters(double mult, double momentum){
     for(int l=0; l<numLayers; l++){
-        layers[l]->updateParameters(learnRate);
+        layers[l]->updateParameters(mult, momentum);
     }
 }
 

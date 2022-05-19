@@ -14,13 +14,14 @@
 #include <stdlib.h>
 #include <ctime>
 #include <math.h>
+#include <string>
 using namespace std;
 
 //training deatils
 
-#define momentum 0.9
+// learnRate, momentum, and batchSize are changed to function arguments
+// instead of constants.
 #define maxNorm 1
-#define batchSize 30
 
 //network details
 
@@ -56,7 +57,7 @@ public:
     void setupParams();
     void randomize(double startingParameterRange);
     void resetGradient();
-    void updateParameters(double learnRate);
+    void updateParameters(double mult, double momentum);
     void save();
     void readNet();
 };
@@ -128,7 +129,7 @@ public:
     void pass();
     void resetGradient();
     void backProp();
-    void updateParameters(double learnRate);
+    void updateParameters(double mult, double momentum);
     void save();
     void readNet();
 };
