@@ -144,3 +144,13 @@ void Grid::verifyDPRow(int maxSize, double density, int numTrials){
         assert(DP() == byRow());
     }
 }
+
+double Grid::evalAgent(Agent* a){
+    double sum = 0;
+    for(int i=0; i<8; i++){
+        inputSymmetric(a, i);
+        a->pass();
+        sum += a->output;
+    }
+    return sum / 8;
+}

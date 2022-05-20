@@ -29,9 +29,12 @@ double dinvnonlinear(double x){
 
 void Layer::setupParams(){
     numParams = numWeights + numBias;
+    cout<<numWeights<<' '<<numBias<<'\n';
+    
     params = new double[numParams];
     weights = params;
     bias = params + numWeights;
+    
     Dparams = new double[numParams];
     Dweights = Dparams;
     Dbias = Dparams + numWeights;
@@ -51,10 +54,10 @@ void Layer::resetGradient(){
 
 void Layer::updateParameters(double mult, double momentum){
     for(int i=0; i<numParams; i++){
-        double inc = Dparams[i] * mult;
-        if(rand() % 100 == 0) inc *= 10;
-        //params[i] -= Dparams[i] * mult;
-        params[i] -= inc;
+        //double inc = Dparams[i] * mult;
+        //if(rand() % 100 == 0) inc *= 10;
+        //params[i] -= inc;
+        params[i] -= Dparams[i] * mult;
         Dparams[i] *= momentum;
     }
     // Regularize
@@ -191,6 +194,8 @@ PoolLayer::PoolLayer(int inD, int inH, int inW, int outD, int outH, int outW){
     numWeights = 0;
     numBias = 0;
     numParams = 0;
+    
+    maxIndices = new int[outD * outH * outW];
 }
 
 void PoolLayer::pass(double* inputs, double* outputs){
@@ -277,40 +282,44 @@ void DenseLayer::accumulateGradient(double* inputs, double* Doutputs){
 
 void Agent::setupIO(){
     for(int l=0; l<numLayers; l++){
-        layers[l]->netIn = netIn;
-        layers[l]->netOut = netOut;
+        layers[l]->netIn = &netIn;
+        layers[l]->netOut = &netOut;
     }
 }
 
 void Agent::initInput(int depth, int height, int width){
-    layerIndex = 0;
     prevDepth = depth;
     prevHeight = height;
     prevWidth = width;
+}
+
+int max(int x, int y){
+    if(x < y) return y;
+    return x;
 }
 
 void Agent::addConvLayer(int depth, int height, int width, int convHeight, int convWidth){
-    layers[layerIndex] = new ConvLayer(prevDepth, prevHeight, prevWidth, depth, height, width, convHeight, convWidth);
+    layerHold.push_back(new ConvLayer(prevDepth, prevHeight, prevWidth, depth, height, width, convHeight, convWidth));
     prevDepth = depth;
     prevHeight = height;
     prevWidth = width;
-    layerIndex++;
+    maxNodes = max(maxNodes, prevDepth * prevHeight * prevWidth);
 }
 
 void Agent::addPoolLayer(int depth, int height, int width){
-    layers[layerIndex] = new PoolLayer(prevDepth, prevHeight, prevWidth, depth, height, width);
+    layerHold.push_back(new PoolLayer(prevDepth, prevHeight, prevWidth, depth, height, width));
     prevDepth = depth;
     prevHeight = height;
     prevWidth = width;
-    layerIndex++;
+    maxNodes = max(maxNodes, prevDepth * prevHeight * prevWidth);
 }
 
 void Agent::addDenseLayer(int numNodes){
-    layers[layerIndex] = new DenseLayer(prevDepth * prevHeight * prevWidth, numNodes);
+    layerHold.push_back(new DenseLayer(prevDepth * prevHeight * prevWidth, numNodes));
     prevDepth = numNodes;
     prevHeight = 1;
     prevWidth = 1;
-    layerIndex++;
+    maxNodes = max(maxNodes, prevDepth * prevHeight * prevWidth);
 }
 
 void Agent::randomize(double startingParameterRange){
@@ -361,14 +370,22 @@ void Agent::readNet(){
 }
 
 void Agent::quickSetup(){
-    netIn = new ifstream("net.in");
-    netOut = new ofstream("net.out");
+    netIn = ifstream("net.in");
+    netOut = ofstream("net.out");
+    numLayers = layerHold.size();
+    layers = new Layer*[numLayers];
+    for(int i=0; i<numLayers; i++){
+        layers[i] = layerHold[i];
+    }
+    activation = new double*[numLayers + 1];
+    Dbias = new double*[numLayers];
+    for(int l=0; l<=numLayers; l++){
+        activation[l] = new double[maxNodes];
+    }
+    for(int l=0; l<numLayers; l++){
+        Dbias[l] = new double[maxNodes];
+    }
     setupIO();
     randomize(0.2);
     resetGradient();
-}
-
-void Agent::close(){
-    netIn->close();
-    netOut->close();
 }

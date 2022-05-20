@@ -44,6 +44,8 @@ public:
     // Network interaction
     
     void inputAgent(Agent* a);
+    void inputSymmetric(Agent* a, int t);
+    double evalAgent(Agent* a);
     
 private:
     MinTable* T;

@@ -23,13 +23,6 @@ using namespace std;
 // instead of constants.
 #define maxNorm 1
 
-//network details
-
-#define numLayers 5
-#define maxNodes 600
-#define maxDepth 6
-#define maxConvSize 3
-
 double squ(double x);
 
 // For the network
@@ -60,6 +53,8 @@ public:
     void updateParameters(double mult, double momentum);
     void save();
     void readNet();
+    
+    virtual ~Layer(){}
 };
 
 class ConvLayer : public Layer{
@@ -75,18 +70,29 @@ public:
     virtual void pass(double* inputs, double* outputs);
     virtual void backProp(double* inputs, double* Dinputs, double* Doutputs);
     virtual void accumulateGradient(double* inputs, double* Doutputs);
+    
+    virtual ~ConvLayer(){
+        delete[] params;
+        delete[] Dparams;
+    }
 };
 
 class PoolLayer : public Layer{
 public:
     int inputDepth, inputHeight, inputWidth;
     int outputDepth, outputHeight, outputWidth;
-    int maxIndices[maxNodes];
+    int* maxIndices;
     
     PoolLayer(int inD, int inH, int inW, int outD, int outH, int outW);
     
     virtual void pass(double* inputs, double* outputs);
     virtual void backProp(double* inputs, double* Dinputs, double* Doutputs);
+    
+    virtual ~PoolLayer(){
+        //delete[] params;
+        //delete[] Dparams;
+        delete[] maxIndices;
+    }
 };
 
 class DenseLayer : public Layer{
@@ -98,25 +104,27 @@ public:
     virtual void pass(double* inputs, double* outputs);
     virtual void backProp(double* inputs, double* Dinputs, double* Doutputs);
     virtual void accumulateGradient(double* inputs, double* Doutputs);
+    
+    virtual ~DenseLayer(){
+        delete[] params;
+        delete[] Dparams;
+    }
 };
 
 class Agent{
 public:
-    Layer* layers[numLayers];
-    double activation[numLayers+1][maxNodes];
-    double Dbias[numLayers][maxNodes];
+    unsigned long numLayers;
+    unsigned maxNodes = 0;
+    Layer** layers; // keep an array of pointers, since abstract classes need to be accessed by reference.
+    double** activation;
+    double** Dbias;
     double output;
     double expected;
     
-    // For network initiation
-    int layerIndex;
-    int prevDepth, prevHeight, prevWidth;
-    
     // For file I/O
-    ifstream* netIn;
-    ofstream* netOut;
+    ifstream netIn;
+    ofstream netOut;
     
-    void setupIO();
     void initInput(int depth, int height, int width);
     void addConvLayer(int depth, int height, int width, int convHeight, int convWidth);
     void addPoolLayer(int depth, int height, int width);
@@ -125,13 +133,27 @@ public:
     
     // For network usage and training
     void quickSetup();
-    void close();
     void pass();
     void resetGradient();
     void backProp();
     void updateParameters(double mult, double momentum);
     void save();
     void readNet();
+    ~Agent(){
+        for(int i=0; i<numLayers; i++){
+            delete layers[i];
+            delete[] Dbias[i];
+        }
+        for(int i=0; i<=numLayers; i++){
+            delete[] activation[i];
+        }
+    }
+    
+private:
+    // For network initiation
+    int prevDepth, prevHeight, prevWidth;
+    vector<Layer*> layerHold;
+    void setupIO();
 };
 
 #endif /* convNet_hpp */
