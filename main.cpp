@@ -37,10 +37,10 @@ unsigned long startTime;
 void runCycle(double learnRate, int batchSize, double momentum){
     Agent net;
     net.initInput(1, 10, 10);
-    net.addConvLayer(4, 10, 10, 5, 5);
+    net.addConvLayer(6, 10, 10, 5, 5);
     net.addConvLayer(6, 10, 10, 5, 5);
     net.addPoolLayer(6, 5, 5);
-    net.addDenseLayer(60);
+    net.addDenseLayer(100);
     net.addDenseLayer(1);
     net.quickSetup();
     
@@ -84,17 +84,18 @@ int main(int argc, const char * argv[]) {
     testDeterministic();
      */
     /*
-    double learnRate = 1e-05;
+    double learnRate = 6e-06;
     int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
     */
+    
     Agent net;
     net.initInput(1, 10, 10);
-    net.addConvLayer(4, 10, 10, 5, 5);
+    net.addConvLayer(6, 10, 10, 5, 5);
     net.addConvLayer(6, 10, 10, 5, 5);
     net.addPoolLayer(6, 5, 5);
-    net.addDenseLayer(60);
+    net.addDenseLayer(100);
     net.addDenseLayer(1);
     net.quickSetup();
     net.readNet();
@@ -112,17 +113,20 @@ int main(int argc, const char * argv[]) {
         }
         fout<<G.byRow()<<'\n';
         fout<<G.evalAgent(&net)<<"\n\n";
-        /*
         G.inputAgent(&net);
         net.pass();
-        fout<<net.output<<"\n\n";*/
+        fout<<net.output<<"\n\n";
     }
-    /*
     double error = 0;
-    int trials = 1000;
+    double numCorrect = 0;
+    int trials = 10000;
     for(int i=0; i<trials; i++){
         G.randomize(0.5);
-        error += squ(G.byRow() - G.evalAgent(&net));
+        double expected = G.byRow();
+        double agentOutput = G.evalAgent(&net);
+        error += squ(expected - agentOutput);
+        numCorrect += abs(expected - agentOutput) < 0.5;
     }
-    cout<<"Average error: "<<(error / trials)<<'\n';*/
+    cout<<"Average error: "<<(error / trials)<<'\n';
+    cout<<"Accuracy: "<<(numCorrect / trials)<<'\n';
 }
