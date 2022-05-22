@@ -370,8 +370,8 @@ void Agent::readNet(){
 }
 
 void Agent::quickSetup(){
-    netIn = ifstream("net.in");
-    netOut = ofstream("net.out");
+    //netIn = ifstream("net.in");
+    //netOut = ofstream("net.out");
     numLayers = layerHold.size();
     layers = new Layer*[numLayers];
     for(int i=0; i<numLayers; i++){

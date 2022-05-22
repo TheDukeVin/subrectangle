@@ -15,6 +15,7 @@
 #include <ctime>
 #include <math.h>
 #include <string>
+#include <list>
 using namespace std;
 
 //training deatils
