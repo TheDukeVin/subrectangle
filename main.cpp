@@ -38,7 +38,8 @@ void runCycle(double learnRate, int batchSize, double momentum){
     net.initInput(1, 10, 10);
     net.addConvLayer(7, 10, 10, 5, 5);
     net.addConvLayer(7, 10, 10, 5, 5);
-    net.addPoolLayer(7, 5, 5);
+    net.addConvLayer(11, 8, 8, 5, 5);
+    net.addPoolLayer(11, 4, 4);
     net.addDenseLayer(120);
     net.addDenseLayer(1);
     net.quickSetup();
@@ -149,13 +150,13 @@ int main(int argc, const char * argv[]) {
     /*
     testDeterministic();
      */
-    /*
+    
     double learnRate = 4e-06;
     int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
-    */
     
-    evaluate();
+    
+    //evaluate();
     
 }
