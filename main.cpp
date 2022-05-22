@@ -106,6 +106,7 @@ void evaluate(){
     net.addDenseLayer(120);
     net.addDenseLayer(1);
     net.quickSetup();
+    net.netIn = ifstream("net.in");
     net.readNet();
     
     Grid G(10, 10);
@@ -131,10 +132,10 @@ void evaluate(){
     for(int i=0; i<trials; i++){
         G.randomize(0.5);
         double expected = G.byRow();
-        //double agentOutput = G.evalAgent(&net);
-        G.inputAgent(&net);
-        net.pass();
-        double agentOutput = net.output;
+        double agentOutput = G.evalAgent(&net);
+        //G.inputAgent(&net);
+        //net.pass();
+        //double agentOutput = net.output;
         error += squ(expected - agentOutput);
         numCorrect += abs(expected - agentOutput) < 0.5;
     }
@@ -148,13 +149,13 @@ int main(int argc, const char * argv[]) {
     /*
     testDeterministic();
      */
-    
+    /*
     double learnRate = 4e-06;
     int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
+    */
     
-    
-    //evaluate();
+    evaluate();
     
 }
