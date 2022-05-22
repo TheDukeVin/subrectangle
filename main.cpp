@@ -149,7 +149,7 @@ int main(int argc, const char * argv[]) {
     testDeterministic();
      */
     
-    double learnRate = 5e-06;
+    double learnRate = 4e-06;
     int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
