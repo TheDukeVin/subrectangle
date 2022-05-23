@@ -38,8 +38,7 @@ void runCycle(double learnRate, int batchSize, double momentum){
     net.initInput(1, 10, 10);
     net.addConvLayer(7, 10, 10, 5, 5);
     net.addConvLayer(7, 10, 10, 5, 5);
-    net.addConvLayer(11, 8, 8, 5, 5);
-    net.addPoolLayer(11, 4, 4);
+    net.addPoolLayer(7, 5, 5);
     net.addDenseLayer(120);
     net.addDenseLayer(1);
     net.quickSetup();
@@ -55,7 +54,7 @@ void runCycle(double learnRate, int batchSize, double momentum){
     }
     double minError = 10000;
     
-    for(int t=0; t<=600000; t++){
+    for(int t=0; t<=300000; t++){
         double batchCost = 0;
         for(int i=0; i<batchSize; i++){
             G.randomize(0.5);
@@ -151,8 +150,8 @@ int main(int argc, const char * argv[]) {
     testDeterministic();
      */
     
-    double learnRate = 4e-06;
-    int batchSize = 30;
+    double learnRate = 6e-06;
+    int batchSize = 60;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
     
