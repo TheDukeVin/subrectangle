@@ -131,14 +131,14 @@ void evaluate(){
     }
     double error = 0;
     double numCorrect = 0;
-    int trials = 10000;
+    int trials = 100000;
     for(int i=0; i<trials; i++){
         G.randomize(0.5);
         double expected = G.byRow();
-        double agentOutput = G.evalAgent(&net);
-        //G.inputAgent(&net);
-        //net.pass();
-        //double agentOutput = net.output;
+        //double agentOutput = G.evalAgent(&net);
+        G.inputAgent(&net);
+        net.pass();
+        double agentOutput = net.output;
         error += squ(expected - agentOutput);
         numCorrect += abs(expected - agentOutput) < 0.5;
     }
@@ -152,13 +152,13 @@ int main(int argc, const char * argv[]) {
     /*
     testDeterministic();
      */
-    
+    /*
     double learnRate = 6e-06;
     int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
+    */
     
-    
-    //evaluate();
+    evaluate();
     
 }
