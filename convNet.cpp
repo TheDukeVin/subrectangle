@@ -29,7 +29,6 @@ double dinvnonlinear(double x){
 
 void Layer::setupParams(){
     numParams = numWeights + numBias;
-    cout<<numWeights<<' '<<numBias<<'\n';
     
     params = new double[numParams];
     weights = params;
