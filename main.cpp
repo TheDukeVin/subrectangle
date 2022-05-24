@@ -243,6 +243,22 @@ void optimize(double learnRate, int batchSize, double momentum){
     nets[bestNet].netOut.close();
 }
 
+void calculate_standard(){
+    int numTrials = 1000000;
+    long sum = 0;
+    long sumSqu = 0;
+    Grid G(10, 10);
+    for(int i=0; i<numTrials; i++){
+        G.randomize(0.5);
+        int val = G.byRow();
+        sum += val;
+        sumSqu += squ(val);
+    }
+    double expected = (double) sum / numTrials;
+    double expectedSqu = (double) sumSqu / numTrials;
+    cout<<"Variance: "<<(expectedSqu - squ(expected))<<'\n';
+}
+
 int main(int argc, const char * argv[]) {
     srand((unsigned) time(NULL));
     startTime = time(NULL);
@@ -256,7 +272,7 @@ int main(int argc, const char * argv[]) {
     runCycle(learnRate, batchSize, momentum);
     */
     
-    evaluate();
+    //evaluate();
     
     /*
     double learnRate = 6e-06;
@@ -264,4 +280,6 @@ int main(int argc, const char * argv[]) {
     double momentum = 0.9;
     optimize(learnRate, batchSize, momentum);
      */
+    
+    calculate_standard();
 }
