@@ -43,6 +43,9 @@ void runCycle(double learnRate, int batchSize, double momentum){
     net.addDenseLayer(1);
     net.quickSetup();
     
+    net.netIn = ifstream("net.in");
+    net.readNet();
+    
     Grid G(10, 10);
     double avgError;
     double error = 0;
@@ -54,7 +57,7 @@ void runCycle(double learnRate, int batchSize, double momentum){
     }
     double minError = 10000;
     
-    for(int t=0; t<=300000; t++){
+    for(int t=0; t<=1200000; t++){
         double batchCost = 0;
         for(int i=0; i<batchSize; i++){
             G.randomize(0.5);
@@ -151,7 +154,7 @@ int main(int argc, const char * argv[]) {
      */
     
     double learnRate = 6e-06;
-    int batchSize = 60;
+    int batchSize = 30;
     double momentum = 0.9;
     runCycle(learnRate, batchSize, momentum);
     
